@@ -1,70 +1,53 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using System;
 
 public class GameManager : MonoBehaviour
 {
-    public List<byte> list = new List<byte>();
+    private static GameManager instance = null;
+    GameObject stateObj;
     private void Awake()
     {
+        if (instance != null)
+        {
+            Destroy(instance);
+        }
 
-        foreach (States state in Enum.GetValues(typeof(States)))
-        {
-            list.Add((byte)state);
-        }
+        instance = this;
     }
-    private void Start()
+    public static GameManager Instance
     {
-        for(int i=0; i < list.Count; i++)
+        get
         {
-            Debug.Log(list[i]); 
+            if (null == instance)
+            {
+                return null;
+            }
+            return instance;
         }
     }
+
     public void StateToEnemy(int num)
     {
-        switch (num)
+        byte byteVal = (byte)num;
+        foreach (States state1 in Enum.GetValues(typeof(States)))
         {
-            case 0:
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 6:
-                break;
-            case 7:
-                break;
+            if (byteVal == (byte)state1)
+            {
+                Player.Instance.FindStateObj("StateToEnemy", byteVal).SetActive(true);
+            }
         }
     }
 
     public void StateToMe(int num)
     {
-        switch (num)
+        byte byteVal = (byte)num;
+        foreach (States state1 in Enum.GetValues(typeof(States)))
         {
-            case 0:
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 6:
-                break;
-            case 7:
-                break;
+            if (byteVal == (byte)state1)
+            {
+                Player.Instance.FindStateObj("StateToMe", byteVal).SetActive(false);
+            }
         }
     }
 

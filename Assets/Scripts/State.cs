@@ -1,4 +1,1 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-public enum States : byte { paralysis, poisoning, provocation, fear, burn, sleep, confuse, frozen };
+public enum States : byte { paralysis=0, poisoning, provocation, fear, burn, sleep, confuse, frozen };
