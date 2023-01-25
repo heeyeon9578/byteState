@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Panel
   - Enemy
+  - StateToEnemy
+  - StateToMe
   layers:
   - Default
   - TransparentFX

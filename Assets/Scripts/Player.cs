@@ -1,30 +1,27 @@
+using System.Collections.Generic;
 using UnityEngine;
+using System;
+using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
 {
-    private static Player instance = null;
+    List<byte> states= new List<byte>();
     [SerializeField] Transform parent;//Panel
-    GameObject obj; //상태표시판
-    private void Awake()
-    {
-        if (instance != null)
-        {
-            Destroy(instance);
-        }
+    GameObject obj;
+    GameObject myStatePanel;
+    GameObject enemyStatePanel;
 
-        instance = this;
-    }
-    public static Player Instance
+    private void Start()
     {
-        get
+        myStatePanel = parent.GetChild(2).gameObject; //내상태판
+        enemyStatePanel = parent.GetChild(3).gameObject; //적상태판
+
+        foreach (States state1 in Enum.GetValues(typeof(States)))
         {
-            if (null == instance)
-            {
-                return null;
-            }
-            return instance;
+            states.Add((byte)state1); 
         }
     }
+
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -33,49 +30,65 @@ public class Player : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             Physics.Raycast(ray, out hit);
 
-            if(hit.collider != null)
+            if (hit.collider != null)
             {
                 GameObject gobj = hit.collider.gameObject;
                 if (gobj.CompareTag("Player"))
                 {
-                    obj = parent.GetChild(2).gameObject;
+                    obj = myStatePanel;
                 }
-                else if(gobj.CompareTag("Enemy"))
+                else if (gobj.CompareTag("Enemy"))
                 {
-                    obj = parent.GetChild(3).gameObject;
+                    obj = enemyStatePanel;
                 }
                 else
                 {
                     return;
                 }
-                
                 obj.SetActive(true);
             }
         }
     }
 
+    //상태 부여
+    public void StateToEnemy(int num)
+    {
+        string ButtonName = EventSystem.current.currentSelectedGameObject.tag;
+        byte byteVal = (byte)num;
+        for(int i=0; i<states.Count; i++)
+        {
+            if (byteVal == states[i])
+            {
+                GameObject stateobj = FindStateObj(ButtonName, byteVal);
+                if (stateobj.activeSelf)
+                {
+                    stateobj.SetActive(false);
+                }
+                else
+                {
+                    stateobj.SetActive(true);
+                }
+            }
+        }
+
+    }
+
+    //상태 오브젝트 찾기
     public GameObject FindStateObj(string who, byte val)
     {
-        GameObject obj2;
-        if (who== "StateToEnemy")
+        if (who == "StateToEnemy")
         {
-            obj2 = parent.GetChild(3).GetChild(1).GetChild(val).gameObject;
-            return obj2;
-
+            obj = enemyStatePanel;
         }
-        else if(who== "StateToMe")
+        else if (who == "StateToMe")
         {
-            obj2 = parent.GetChild(2).GetChild(1).GetChild(val).gameObject;
-            return obj2;
-
+            obj = myStatePanel;
         }
         else
         {
             return null;
         }
-
-        
+        return obj.transform.GetChild(1).GetChild(val).gameObject;
     }
-
 
 }
